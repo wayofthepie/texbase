@@ -9,6 +9,7 @@
 \usepackage{amsthm}
 \usepackage[mathscr]{euscript}
 \usepackage{hyperref}
+\usepackage{mathtools}
 
 
 \title{Cryptography}
@@ -176,7 +177,7 @@ $\mathscr{K}$ is the key-space, $\mathscr{M}$ is the message-space and $\mathscr
 \end{gather}
 
 \noindent
-In a one time pad the message, key and ciphertext spaces are the set of n-bit binary strings. A key $k \in \mathscr{K}$ is a \emph{random bit string} the length of the message, i.e. $|\mathscr{K}|=|\mathscr{M}|$.
+In a one time pad the message, key and ciphertext spaces are the set of n-bit binary strings. A key $k \in \mathscr{K}$ is a \emph{random bit string} the length of the message, i.e. $|\mathscr{K}|=|\mathscr{M}|$. A one time pad is defined as follows:
 
 \begin{gather}
 	\begin{gathered}
@@ -184,9 +185,47 @@ In a one time pad the message, key and ciphertext spaces are the set of n-bit bi
 	\end{gathered}	
 \end{gather}
 
-\noindent
-Given the encryption algorithm is an \emph{\textbf{xor}} of the key and message, we get that the ciphertext is also the same length as the key and the message, i.e. $|\mathscr{K}|=|\mathscr{M}|=|\mathscr{C}|$.
+Given the encryption algorithm is an \emph{\textbf{xor}} of the key and message, we get that the ciphertext is also the same length as the key and the message, i.e. $|\mathscr{K}|=|\mathscr{M}|=|\mathscr{C}|$. An example:
 
+\[ \begin{array}{*9r}
+    &		&m: &0 &1 &1 &0 &1 &1 \\
+    &\oplus	&k:	&1 &0 &1 &1 &0 &1 \\ \hline
+    &		&c:	&1 &1 &0 &1 &1 &0 \\ 
+   \end{array} \]
+
+
+A one time pad is a cipher because decrypting the ciphertext with the key used to encrypt the message does indeed give you the message:
+
+\begin{gather}
+	\begin{gathered}
+		D(k, E(k, m)) = m \\
+		\Rightarrow D(k, E(k, m)) = D(k, k \oplus m) = k \oplus k \oplus m = 0 \oplus m =m
+	\end{gathered}
+\end{gather}
+
+In the above equation we get $k \oplus k \oplus m = 0 \oplus m$ as $k \oplus k$ is $0$. 
+
+\subsection{One Time Pads In Practice}
+One time pads are very fast, but are hard to use in practice as the keys must be as long as the messages.
+
+
+\section{Perfect Secrecy}
+\begin{definition}
+	A cipher $(E,D)$ over $(\mathscr{K},\mathscr{M},\mathscr{C})$ has \textbf{perfect secrecy} if:
+\end{definition}
+
+\begin{gather}
+\begin{gathered}
+	\forall. m_0, m_1 \in \mathscr{M} : \; \big\lvert m_0 \big\rvert = \big\lvert m_1 \big\rvert \quad \textrm{and} \\
+	\forall. c \in \mathscr{C} : Pr \big\lbrack E(k, m_0) = c \big\rbrack = Pr \big\lbrack E(k, m_1) = c \big\rbrack 
+	\; \textrm{where} \; k \xleftarrow{R} \mathscr{K}
+\end{gathered}
+\end{gather}
+
+$k \xleftarrow{R} \mathscr{K}$ denotes that $k$ is a \emph{uniform random variable} in the keyspace $\mathscr{K}$. If all that is intercepted is the ciphertext $c$, then the probability that the message is $m_0$ or $m_1$ is the same, this holds for all $m$. From a ciphertext only attack we can learn nothing about the plaintext, however other attacks are possible.
+
+
+% Bibliography
 \begin{thebibliography}{9} 
 	\bibitem{1} Gilbert Vernam patented the one time pad between 1918 and 1919, see \url{http://www.google.com/patents/US1310719}. (\todo{Expand on this a little, maybe...})
 \end{thebibliography}
