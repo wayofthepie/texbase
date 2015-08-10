@@ -8,6 +8,8 @@
 \usepackage{tikz}
 \usepackage{amsthm}
 \usepackage[mathscr]{euscript}
+\usepackage{hyperref}
+
 
 \title{Cryptography}
 \author{Stephen O'Brien}
@@ -21,7 +23,8 @@
 
 \newcommand\todo[1]{\noindent\textcolor{red}{#1}}
 
-\newtheorem{deftheorem}{Definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
 
 
 \begin{document}
@@ -39,7 +42,7 @@
 Let $U$ be a finite set (e.g. $U = \{0,1\}^n$), \textbf{probability distribution} $P$ over $U$ is a function $P : U \rightarrow [0,1]$ such that
 
 \begin{gather}
-	\sum\limits_{x \, \epsilon \, U} P(x) = 1
+	\sum\limits_{x \in  U} P(x) = 1
 \end{gather}
 
 \todo{Expand on what Probability Distribution is}
@@ -47,7 +50,7 @@ Let $U$ be a finite set (e.g. $U = \{0,1\}^n$), \textbf{probability distribution
 \subsection{Examples}
 \subsubsection{Uniform Distribution}
 \begin{gather}
-	\forall . x \,\epsilon\, U : P(x) = \frac{1}{|U|}
+	\forall . x \in U : P(x) = \frac{1}{|U|}
 \end{gather}
 \subsubsection{Point Distribution}
 Point distribution at $x_0$:
@@ -61,7 +64,7 @@ Point distribution at $x_0$:
 For a set $A \subseteq U$:
 
 \begin{gather}
-	Pr[A] = \sum\limits_{x\,\epsilon\,A} P(x) \,\epsilon\, [0,1]		
+	Pr[A] = \sum\limits_{x \in A} P(x) \in [0,1]		
 \end{gather}
 \begin{center}
 	Note: $Pr[U] = 1$
@@ -74,7 +77,7 @@ The set $A$ is called an \textbf{event}.
 Let $U = \{0,1\}^8$ ($|U| = 256$, all possible byte values).
 
 \begin{gather*}
-	A = \{ x \,\epsilon\, U \;|\; lsb_2(x) = 11\} \subseteq U \\
+	A = \{ x \in U \;|\; lsb_2(x) = 11\} \subseteq U \\
 	\textrm{for uniform distribution on } \{0,1\}^8 : Pr[A] = \frac{1}{4}
 \end{gather*}
 
@@ -87,8 +90,8 @@ For events $A_1$ and $A_2$:
 
 \subsection{Example}
 \begin{gather*}
-	A_0 = \big\{ x \,\epsilon\, \{0,1\}^n \;|\; lsb_2(x)=11 \big\} \quad ; \quad A_1 = \big\{ x \,\epsilon\, \{0,1\}^n \;|\; msb_2(x)=11 \big\}	\\
-		Pr \big[ lsb_2(x) = 11 \; \textrm{or} \; msb_2(x) = 11 \big] = Pr \big[A_0 \,\epsilon\, A_1 \big] \leq \frac{1}{4} + \frac{1}{4} = \frac{1}{2}
+	A_0 = \big\{ x \in \{0,1\}^n \;|\; lsb_2(x)=11 \big\} \quad ; \quad A_1 = \big\{ x \in \{0,1\}^n \;|\; msb_2(x)=11 \big\}	\\
+		Pr \big[ lsb_2(x) = 11 \; \textrm{or} \; msb_2(x) = 11 \big] = Pr \big[A_0 \in A_1 \big] \leq \frac{1}{4} + \frac{1}{4} = \frac{1}{2}
 \end{gather*}
 \begin{center}
 	\begin{tikzpicture}[fill=gray]
@@ -117,7 +120,7 @@ A random variable $X$ is a function $X : U \rightarrow V$
 
 \subsection{Example}
 \begin{gather*}
-X : \{ 0,1 \}^n \rightarrow \{ 0,1 \} \; ; \; X(y) = lsb(y) \,\epsilon\, \{0,1\}
+X : \{ 0,1 \}^n \rightarrow \{ 0,1 \} \; ; \; X(y) = lsb(y) \in \{0,1\}
 \end{gather*}
 
 \noindent
@@ -136,25 +139,55 @@ More generally, rand. var $X$ induces a distribution on $V$:
 Let $U$ be some set, e.g. $U = \{0,1\}^n$. We denote a \emph{\textbf{uniform random variable}} over $U$ as follows: 
 
 \begin{gather*}
-	\forall.a \,\epsilon\, U : \; Pr [r = a] = \frac{1}{|U|}
+	\forall.a \in U : \; Pr [r = a] = \frac{1}{|U|}
 \end{gather*}
 
 \noindent
 More formally, $r$ is the identity function: 
 
 \begin{gather*}
-	\forall.x \,\epsilon\, U : \; r(x) = x
+	\forall.x \in U : \; r(x) = x
 \end{gather*}
+
+\todo{Finish Chapter 1!!!}
 
 \chapter{Stream Ciphers}
 \section{Symmetric Cipher}
-\begin{deftheorem}
+\begin{definition}
 A \textbf{cipher} defined over $( \mathscr{K,M,C} )$ is a pair of \textbf{polynomial time algorithms} $(E,D)$ such that:
-	\begin{gather*}
+\begin{gather}
+	\begin{gathered}
 		E : \mathscr{K} \times \mathscr{M} \rightarrow \mathscr{C} \\
 		D : \mathscr{K} \times \mathscr{C} \rightarrow \mathscr{K} \\
-		\textrm{s.t} \quad \forall.m \,\epsilon\, \mathscr{M},\; k \,\epsilon\, \mathscr{K} : D(k, E(k, m)) = m
-	\end{gather*}
-\end{deftheorem}
+		\textrm{s.t} \quad \forall m \in \mathscr{M},\; k \in \mathscr{K} : D(k, E(k, m)) = m
+	\end{gathered}
+\end{gather}
+\end{definition}
 
+\noindent
+$\mathscr{K}$ is the key-space, $\mathscr{M}$ is the message-space and $\mathscr{C}$ is the ciphertext-space. The encryption algorithm $E$ is often randomized but the decryption algorithm $D$ is \emph{\textbf{always}} deterministic.
+
+\section{One Time Pad\textsuperscript{\cite{1}}}
+
+\begin{gather}
+	\begin{gathered}
+		\mathscr{M} = \mathscr{C} = \mathscr{K} = \{0,1\}^n			
+	\end{gathered}	
+\end{gather}
+
+\noindent
+In a one time pad the message, key and ciphertext spaces are the set of n-bit binary strings. A key $k \in \mathscr{K}$ is a \emph{random bit string} the length of the message, i.e. $|\mathscr{K}|=|\mathscr{M}|$.
+
+\begin{gather}
+	\begin{gathered}
+		\exists. c \in \mathscr{C}, k \in \mathscr{K}, m \in \mathscr{M}: E(k, m) = k \oplus m = c
+	\end{gathered}	
+\end{gather}
+
+\noindent
+Given the encryption algorithm is an \emph{\textbf{xor}} of the key and message, we get that the ciphertext is also the same length as the key and the message, i.e. $|\mathscr{K}|=|\mathscr{M}|=|\mathscr{C}|$.
+
+\begin{thebibliography}{9} 
+	\bibitem{1} Gilbert Vernam patented the one time pad between 1918 and 1919, see \url{http://www.google.com/patents/US1310719}. (\todo{Expand on this a little, maybe...})
+\end{thebibliography}
 \end{document}
