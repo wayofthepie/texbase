@@ -22,7 +22,7 @@
 % Increase table row height globally
 \renewcommand{\arraystretch}{2}
 
-\newcommand\todo[1]{\noindent\textcolor{red}{#1}}
+\newcommand\todo[1]{\noindent\textcolor{red}{TODO: #1}}
 
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
@@ -163,10 +163,12 @@ A \textbf{cipher} defined over $( \mathscr{K,M,C} )$ is a pair of \textbf{polyno
 		\textrm{s.t} \quad \forall m \in \mathscr{M},\; k \in \mathscr{K} : D(k, E(k, m)) = m
 	\end{gathered}
 \end{gather}
-\end{definition}
+
 
 \noindent
 $\mathscr{K}$ is the key-space, $\mathscr{M}$ is the message-space and $\mathscr{C}$ is the ciphertext-space. The encryption algorithm $E$ is often randomized but the decryption algorithm $D$ is \emph{\textbf{always}} deterministic.
+\end{definition}
+
 
 \section{One Time Pad\textsuperscript{\cite{1}}}
 
@@ -211,18 +213,49 @@ One time pads are very fast, but are hard to use in practice as the keys must be
 
 \section{Perfect Secrecy}
 \begin{definition}
-	A cipher $(E,D)$ over $(\mathscr{K},\mathscr{M},\mathscr{C})$ has \textbf{perfect secrecy} if:
-\end{definition}
+A cipher $(E,D)$ over $(\mathscr{K},\mathscr{M},\mathscr{C})$ has \textbf{perfect secrecy} if:
 
 \begin{gather}
 \begin{gathered}
-	\forall. m_0, m_1 \in \mathscr{M} : \; \big\lvert m_0 \big\rvert = \big\lvert m_1 \big\rvert \quad \textrm{and} \\
+	\forall. m_0, m_1 \in \mathscr{M} : \; \big\lvert m_0 \big\rvert = \big\lvert m_1 \big\rvert \; \textrm{and} \\
 	\forall. c \in \mathscr{C} : Pr \big\lbrack E(k, m_0) = c \big\rbrack = Pr \big\lbrack E(k, m_1) = c \big\rbrack 
 	\; \textrm{where} \; k \xleftarrow{R} \mathscr{K}
 \end{gathered}
 \end{gather}
 
+
 $k \xleftarrow{R} \mathscr{K}$ denotes that $k$ is a \emph{uniform random variable} in the keyspace $\mathscr{K}$. If all that is intercepted is the ciphertext $c$, then the probability that the message is $m_0$ or $m_1$ is the same, this holds for all $m$. From a ciphertext only attack we can learn nothing about the plaintext, however other attacks are possible.
+\end{definition}
+
+\section{Pseudo Random Number Generators}
+\begin{definition}
+A \textbf{PRG} is a function
+
+\begin{gather}
+\begin{gathered}
+	G : \{0,1\}^s \rightarrow \{0,1\}^n, \quad n \gg s
+\end{gathered}
+\end{gather}
+
+\noindent
+$G$ is a function from the seed space $\{0,1\}^s$ to a \textbf{pseudo-random} output $\{0,1\}^n$ where $n$ is much much greater than $s$.
+\end{definition}
+
+\todo{Draw a pretty picture here...} 
+
+
+\subsection{Stream Cipher Encryption And Decryption}
+\noindent
+To encrypt with a stream cipher we XOR the message $m$ with $G(k)$, to decrypt we XOR the ciphertext $c$ with $G(k)$
+
+\begin{gather}
+\begin{gathered}
+	c = E(k, m) = m \oplus G(k) \\
+	m = D(k, c) = c \oplus G(k)
+\end{gathered}
+\end{gather}
+
+
 
 
 % Bibliography
