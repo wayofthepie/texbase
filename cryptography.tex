@@ -6,11 +6,16 @@
 \usepackage{amsmath}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usepackage{bm}
+\usepackage{times}
 \usepackage{amsthm}
 \usepackage[mathscr]{euscript}
 \usepackage{hyperref}
 \usepackage{mathtools}
 
+
+% Tikz setup
+\usetikzlibrary{arrows,shapes}
 
 \title{Cryptography}
 \author{Stephen O'Brien}
@@ -25,8 +30,8 @@
 \newcommand\todo[1]{\noindent\textcolor{red}{TODO: #1}}
 
 \newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}
 
 \begin{document}
 \maketitle
@@ -227,6 +232,34 @@ A cipher $(E,D)$ over $(\mathscr{K},\mathscr{M},\mathscr{C})$ has \textbf{perfec
 $k \xleftarrow{R} \mathscr{K}$ denotes that $k$ is a \emph{uniform random variable} in the keyspace $\mathscr{K}$. If all that is intercepted is the ciphertext $c$, then the probability that the message is $m_0$ or $m_1$ is the same, this holds for all $m$. From a ciphertext only attack we can learn nothing about the plaintext, however other attacks are possible.
 \end{definition}
 
+\subsection{One Time Pads And Perfect Secrecy}
+\begin{lemma}
+The One Time Pad has Perfect Secrecy
+\end{lemma}
+
+\begin{proof}
+\begin{gather}
+	\forall.m,c : Pr \big\lbrack E(k, m) = c \big\rbrack = 
+		\frac{\textrm{\#keys} \; k \leftarrow \mathscr{K} : E(k,m) = c}{\big\lvert \mathscr{K} \big\rvert} \\
+	\Rightarrow \forall.m,c : \#\{k \in \mathscr{K} : E(k,m) = c \} = \textrm{a constant}
+\end{gather}
+\todo{Clean this "proof" up...}
+\noindent
+For clarity on the cleanup - (2.7) is \emph{the number of keys that map $m$ to $c$ divided by the total number of keys}.
+\end{proof}
+
+\subsection{Issues}
+Perfect secrecy has an issue
+
+\begin{gather}
+\begin{gathered}
+	\big\lvert \mathscr{K} \big\rvert \ge \big\lvert \mathscr{M} \big\rvert
+\end{gathered}
+\end{gather}
+
+
+\todo{Finish this section.}
+
 \section{Pseudo Random Number Generators}
 \begin{definition}
 A \textbf{PRG} is a function
@@ -255,7 +288,61 @@ To encrypt with a stream cipher we XOR the message $m$ with $G(k)$, to decrypt w
 \end{gathered}
 \end{gather}
 
+Stream ciphers cannot have perfect secrecy as the seed space is smaller than the . Why is this secure? We need another definition of security to answer this.
 
+
+
+\section{Attacks On The One Time Pad And Stream Ciphers}
+\subsection{Attack One: Two Time Pad}
+Never use the cipher key more than once! Given $ c_1 \leftarrow m_1 \oplus PRG(k) \quad \textrm{and} \quad	c_2 \leftarrow m_2 \oplus PRG(k)$, we get
+
+\begin{equation} \label{eq1}
+\begin{split}
+	c_1 \oplus c_2 	& = \big( m_1 \oplus PRG(k) \big) \oplus \big( m_2 \oplus PRG(k) \big) \\	
+	 				& = m_1 \oplus m_2 \oplus PRG(k) \oplus PRG(k) \\
+	 				& = m_1 \oplus m_2	\oplus 0 \\
+	 				& = m_1 \oplus m_2
+\end{split}
+\end{equation}
+
+There is enough redundancy in the English language (and ASCII encoding, assuming these messages are ASCII encoded) such that it is easy to recover $m_1$ and $m_2$:
+
+\begin{equation*} 
+\begin{split}
+	m_1 \oplus m_2 \rightarrow m_1,\,m_2
+\end{split}
+\end{equation*}
+
+\subsection{Real World Examples Of The Two Time Pad Attack}
+\subsubsection{Project Verona}
+1941 - 1946... \todo{Fill this out a bit}
+
+\subsubsection{MS-PPTP (Windows NT)}
+
+\tikzstyle{int}=[draw, fill=blue!20, minimum size=2em]
+\tikzstyle{init} = [pin edge={to-,thin,black}]
+\begin{center}
+\begin{tikzpicture}[node distance=10cm,auto,>=latex']
+    \node [int, pin={[init]left:$k$}, minimum size=2cm] (a) {client};
+    \node [int, pin={[init]right:$k$}, minimum size=2cm] (c) [right of=a] {server};
+    \node [coordinate] (end) [right of=c, node distance=2cm]{};
+
+	% client messages
+	\draw [->] (a.40) -- node [above, text width=5em] {} + (4.5,0) node[right] {$m_1$};
+	\draw [->] (a.20) -- node [above, text width=5em] {} + (4.5,0) node[right] {$m_2$};
+
+	% server messages
+	\draw [->] (c.-150) -- node [above,text width=5em] {} + (-4.5,0) node[left] {$s_1$};
+	\draw [->] (c.-170) -- node [above,text width=5em] {} + (-4.5,0) node[left] {$s_2$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+The client and server share key $k$. The client sends $[m_1 \;\big\vert\big\vert\; m_2 \;\big\vert\big\vert\; ... \;\big\vert\big\vert\; m_n ] \oplus PRG(k)$ and the server sends $[s_1 \;\big\vert\big\vert\; s_2 \;\big\vert\big\vert\; ... \;\big\vert\big\vert\; s_n ] \oplus PRG(k)$.
+
+So, the shared key is used by both the server and the client to encrypt messages.
+
+\subsubsection{802.11b WEP}
 
 
 % Bibliography
